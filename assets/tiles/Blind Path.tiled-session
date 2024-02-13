@@ -1,0 +1,43 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "level01.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "Tileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "level01.tmx": {
+            "scale": 0.9668,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 562.1638394704179,
+                "y": 436.49151841125365
+            }
+        }
+    },
+    "last.imagePath": "C:/Users/kumar/FlutterProjects/Blind Path/assets/images/Terrain",
+    "map.height": 45,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 80,
+    "openFiles": [
+        "Tileset.tsx",
+        "level01.tmx"
+    ],
+    "project": "Blind Path.tiled-project",
+    "recentFiles": [
+        "Tileset.tsx",
+        "level01.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
