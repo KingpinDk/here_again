@@ -55,10 +55,8 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
 
   @override
   FutureOr<void> onLoad() async {
-
-    //debugMode = true;
     await images.loadAll([
-      'Items/Boxes/Box1/idle_perfect.png',
+      'Items/Boxes/Box1/idle.png',
 
       'Main Characters/Paari/idle_down.png',
 

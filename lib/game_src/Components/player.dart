@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:flame/collisions.dart';
+import 'package:here_again/game_src/Components/player_hitbox.dart';
 import 'package:here_again/game_src/game.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
@@ -12,7 +14,8 @@ enum PlayerState {
 class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, KeyboardHandler{
 
   String character;
-  Player({this.character = 'Malala', position}):super(position: position);
+  PlayerHitBox playerHitBox = PlayerHitBox(offsetX: 2, offsetY: 3, width: 12, height: 20);
+  Player({this.character = 'Paari', position}):super(position: position);
 
 
   late final SpriteAnimation idleDownAnimation;
@@ -24,7 +27,10 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
   final double stepTime = 0.10;
 
   List<CollisionBlocks> collisionBlocks = [];
-
+  
+  late bool isMarked = false;
+  late bool isFast = false;
+  Vector2 markedPos = Vector2(0, 0);
   double horizontalMovement = 0;
   double verticalMovement = 0;
   double moveSpeed = 225;
@@ -43,6 +49,7 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
         keysPressed.contains(LogicalKeyboardKey.arrowUp);
     final isDownKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyS) ||
         keysPressed.contains(LogicalKeyboardKey.arrowDown);
+    final isSpaceKeyPressed = keysPressed.contains(LogicalKeyboardKey.space);
 
 
     if(!((isLeftKeyPressed && isUpKeyPressed) || (isLeftKeyPressed && isDownKeyPressed) ||(isRightKeyPressed && isUpKeyPressed) || (isRightKeyPressed && isDownKeyPressed)))
@@ -54,6 +61,34 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
       //up and down
       verticalMovement += isDownKeyPressed? 1 : 0;
       verticalMovement += isUpKeyPressed? -1 : 0;
+    }
+
+    if(isSpaceKeyPressed){
+
+      if(character == 'Paari'){
+        if(isFast){
+          isFast = false;
+          moveSpeed = 225;
+
+        }
+        else{
+          isFast = true;
+          moveSpeed = 500;
+
+        }
+      }
+      else{
+        if(isMarked){
+          isMarked = false;
+          position = markedPos;
+
+        }
+        else{
+          isMarked = true;
+          markedPos = Vector2.copy(position);
+
+        }
+      }
     }
 
 
@@ -71,9 +106,9 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
 
   @override
   FutureOr<void> onLoad() {
-
+    //debugMode = true;
     _loadAllAnimation();
-
+    add(RectangleHitbox(position: Vector2(2, 3), size: Vector2(12,20)));
     return super.onLoad();
   }
 
@@ -141,22 +176,22 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
           if(velocity.x > 0){
             //right
             velocity.x = 0;
-            position.x = block.x - width;
+            position.x = block.x - (playerHitBox.width + playerHitBox.offsetX);
           }
           else if(velocity.x < 0){
             //left
             velocity.x = 0;
-            position.x = block.x + block.width;
+            position.x = block.x + block.width - playerHitBox.offsetX;
           }
           else if(velocity.y < 0){
             //up
             velocity.y = 0;
-            position.y = block.y + block.height;
+            position.y = block.y + block.height - playerHitBox.offsetY;
           }
           else if(velocity.y > 0){
             //down
             velocity.y = 0;
-            position.y = block.y - height;
+            position.y = block.y - (playerHitBox.height + playerHitBox.offsetY);
           }
       }
     }
@@ -164,13 +199,16 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
 
 
   bool _checkCollision(CollisionBlocks block){
-    return ((position.y < block.y + block.height) &&
-            (height + position.y > block.y) &&
-            (position.x < block.x + block.width) &&
-            (width + position.x > block.x));
+
+    final playerY = position.y + playerHitBox.offsetY;
+    final playerX = position.x + playerHitBox.offsetX;
+    final playerWidth = playerHitBox.width;
+    final playerHeight = playerHitBox.height;
+
+    return ((playerY < block.y + block.height) &&
+            (playerHeight + playerY > block.y) &&
+            (playerX < block.x + block.width) &&
+            (playerWidth + playerX > block.x));
   }
-
-
-
 }
 
