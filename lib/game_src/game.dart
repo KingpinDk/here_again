@@ -30,7 +30,6 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
 
 
   bool isMarked = false;
-  Vector2 markedPos = Vector2(0, 0);
   bool isFast = false;
   late JoystickComponent joystick;
   late SpriteComponent mask;
@@ -57,6 +56,9 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
   FutureOr<void> onLoad() async {
     await images.loadAll([
       'Items/Boxes/Box1/idle.png',
+      'Main Characters/disappear.png',
+      'Main Characters/reappear.png',
+
 
       'Main Characters/Paari/idle_down.png',
 
@@ -190,11 +192,11 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
 
           if(isMarked){
             isMarked = false;
-            player.position = markedPos;
+            player.isTelePort = true;
           }
           else{
             isMarked = true;
-            markedPos = Vector2.copy(player.position);
+            player.markedPos = Vector2.copy(player.position);
           }
         },
         defaultSelectedSkin: SpriteComponent(

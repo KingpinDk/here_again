@@ -24,7 +24,7 @@ class Levels extends StatelessWidget {
         child: IconButton(onPressed: () {
           Navigator.of(context).push(
               MaterialPageRoute(
-                  builder: (context) => GameWidget(game: HereAgain(player: Player(character: "Paari"), height: height, width: width, character: 'Paari', isMobile: (!kIsWeb)&&(Platform.isAndroid || Platform.isIOS), isPc: (kIsWeb) || (Platform.isAndroid || Platform.isIOS)))
+                  builder: (context) => GameWidget(game: HereAgain(player: Player(character: "Malala"), height: height, width: width, character: 'Paari', isMobile: (!kIsWeb)&&(Platform.isAndroid || Platform.isIOS), isPc: (kIsWeb) || (Platform.isAndroid || Platform.isIOS)))
               ));
           },
           icon: Image.asset("assets/images/Menu/Buttons/Play.png", width: 60, height: 60,), )

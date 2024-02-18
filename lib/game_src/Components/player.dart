@@ -8,7 +8,7 @@ import 'collision_block.dart';
 
 
 enum PlayerState {
-  idleDown,  walkRight, walkLeft, walkUp, walkDown
+  idleDown,  walkRight, walkLeft, walkUp, walkDown, disAppear, reAppear, none
 }
 
 class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, KeyboardHandler{
@@ -24,12 +24,17 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
   late final SpriteAnimation walkLeftAnimation;
   late final SpriteAnimation walkUpAnimation;
   late final SpriteAnimation walkDownAnimation;
+  late final SpriteAnimation disAppearAnimation;
+  late final SpriteAnimation reAppearAnimation;
+
   final double stepTime = 0.10;
 
   List<CollisionBlocks> collisionBlocks = [];
   
   late bool isMarked = false;
   late bool isFast = false;
+  late bool isTelePort = false;
+  late bool isDis = false;
   Vector2 markedPos = Vector2(0, 0);
   double horizontalMovement = 0;
   double verticalMovement = 0;
@@ -80,8 +85,7 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
       else{
         if(isMarked){
           isMarked = false;
-          position = markedPos;
-
+          isTelePort = true;
         }
         else{
           isMarked = true;
@@ -122,6 +126,8 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
     walkDownAnimation = _spriteAnimation("walk_down", 6);
     walkUpAnimation = _spriteAnimation("walk_up", 6);
 
+    disAppearAnimation = _effectAnimation("disappear", 9);
+    reAppearAnimation = _effectAnimation("reappear", 9);
 
     animations = {
       PlayerState.idleDown : idleDownAnimation,
@@ -131,10 +137,18 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
       PlayerState.walkRight: walkRightAnimation,
       PlayerState.walkLeft: walkLeftAnimation,
 
+      PlayerState.reAppear: reAppearAnimation,
+      PlayerState.disAppear: disAppearAnimation
+
     };
     current = PlayerState.idleDown;
   }
 
+  SpriteAnimation _effectAnimation(String state, int amt){
+    return SpriteAnimation.fromFrameData(
+        game.images.fromCache('Main Characters/$state.png'),
+        SpriteAnimationData.sequenced(amount: amt, stepTime: 0.15, textureSize: Vector2(16,24)));
+  }
   SpriteAnimation _spriteAnimation(String state, int amt){
     return SpriteAnimation.fromFrameData(
         game.images.fromCache('Main Characters/$character/$state.png'),
@@ -150,8 +164,28 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
   }
 
 
-  void _updatePlayerState() {
-    if(velocity.x > 0){
+  Future<void> _updatePlayerState() async {
+    if(isTelePort){
+      velocity.x = 0;
+      velocity.y = 0;
+      current = PlayerState.disAppear;
+      await Future.delayed(const Duration(milliseconds: 1350),(){
+      isTelePort = false;
+      position = markedPos;
+       isDis = true;
+      });
+
+    }
+    else if(isDis){
+      velocity.x = 0;
+      velocity.y = 0;
+      current = PlayerState.reAppear;
+      await Future.delayed(const Duration(milliseconds: 1350),(){
+        isDis = false;
+        position = markedPos;
+      });
+    }
+    else if(velocity.x > 0){
       current = PlayerState.walkRight;
     }
     else if(velocity.x < 0){
@@ -210,5 +244,6 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
             (playerX < block.x + block.width) &&
             (playerWidth + playerX > block.x));
   }
+
 }
 
