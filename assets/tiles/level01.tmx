@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="80" height="45" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="61">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="80" height="45" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="62">
  <tileset firstgid="1" source="Tileset.tsx"/>
  <layer id="1" name="Tile Layer 1" width="80" height="45">
   <data encoding="csv">
@@ -53,6 +53,13 @@
  <objectgroup id="2" name="Spawnpoints">
   <object id="1" name="Player" type="Player" x="320" y="224"/>
   <object id="60" name="box" type="Box" x="704" y="224" width="32" height="32"/>
+  <object id="61" name="Saw" type="Saw" x="240" y="320" width="32" height="32">
+   <properties>
+    <property name="isVertical" type="bool" value="true"/>
+    <property name="offNeg" type="float" value="10"/>
+    <property name="offPos" type="float" value="10"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="3" name="Collisions">
   <object id="18" x="-64" y="-32"/>

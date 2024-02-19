@@ -10,7 +10,7 @@ class Saw extends SpriteAnimationComponent with HasGameRef<HereAgain>{
   final double offPos;
   Saw({this.isVertical= false, this.offNeg = 0, this.offPos = 0, position, size}):super(position: position, size: size);
 
-  static const moveSpeed = 80;
+  late int moveSpeed = 80;
   static const tileSize = 16;
   double moveDirection = 1;
   double rangeNeg = 0;
@@ -18,8 +18,8 @@ class Saw extends SpriteAnimationComponent with HasGameRef<HereAgain>{
 
   @override
   FutureOr<void> onLoad() {
-    priority = -1;
-
+    debugMode = true;
+    priority = 1000;
     if(isVertical){
       rangeNeg = position.y - offNeg*tileSize;
       rangePos = position.y + offPos*tileSize;

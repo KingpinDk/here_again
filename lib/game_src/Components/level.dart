@@ -12,6 +12,7 @@ class Level extends World{
   Level({required this.levelName, required this.player});
   late TiledComponent level;
   List<CollisionBlocks> collisionBlocks = [];
+  List<Saw> saws = [];
 
 
   @override
@@ -23,40 +24,9 @@ class Level extends World{
     final spawnPointsLayer = level.tileMap.getLayer<ObjectGroup>('Spawnpoints');
 
     if(spawnPointsLayer != null){
-      for(final sp in spawnPointsLayer.objects){
-        switch(sp.class_){
-          case 'Player':
-
-            player.position = Vector2(sp.x, sp.y);
-            add(player);
-            break;
-          case 'Saw':
-            final isVertical = sp.properties.getValue("isVertical");
-            final offNeg = sp.properties.getValue("offNeg");
-            final offPos = sp.properties.getValue("offPos");
-
-            final saw = Saw(
-                isVertical: isVertical,
-                offNeg: offNeg,
-                offPos: offPos,
-                position: Vector2(sp.x, sp.y),
-                size: Vector2(sp.height,sp.width)
-            );
-            add(saw);
-            break;
-          case 'Box':
-            final box = Box(
-              player: player,
-              position: Vector2(sp.x, sp.y),
-              size: Vector2(sp.height, sp.width)
-            );
-            add(box);
-            break;
-          default:
-            break;
-        }
-      }
+      _addSpawnPoints(spawnPointsLayer);
     }
+    player.saws = saws;
 
     final collisionsLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
 
@@ -78,5 +48,46 @@ class Level extends World{
       add(block);
     }
   }
+
+  void _addSpawnPoints(ObjectGroup spawnPointsLayer) {
+
+    for(final sp in spawnPointsLayer.objects){
+      switch(sp.class_){
+        case 'Player':
+
+          player.position = Vector2(sp.x, sp.y);
+          add(player);
+          break;
+        case 'Saw':
+          final isVertical = sp.properties.getValue("isVertical");
+          final offNeg = sp.properties.getValue("offNeg");
+          final offPos = sp.properties.getValue("offPos");
+
+          final saw = Saw(
+              isVertical: isVertical,
+              offNeg: offNeg,
+              offPos: offPos,
+              position: Vector2(sp.x, sp.y),
+              size: Vector2(sp.height,sp.width)
+          );
+          saws.add(saw);
+          add(saw);
+          break;
+        case 'Box':
+          final box = Box(
+              player: player,
+              position: Vector2(sp.x, sp.y),
+              size: Vector2(sp.height, sp.width)
+          );
+          add(box);
+          break;
+        default:
+          break;
+      }
+    }
+
+  }
+
+
 
 }

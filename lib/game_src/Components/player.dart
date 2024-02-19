@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:here_again/game_src/Components/player_hitbox.dart';
+import 'package:here_again/game_src/Components/saw.dart';
 import 'package:here_again/game_src/game.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +9,7 @@ import 'collision_block.dart';
 
 
 enum PlayerState {
-  idleDown,  walkRight, walkLeft, walkUp, walkDown, disAppear, reAppear, none
+  idleDown,  walkRight, walkLeft, walkUp, walkDown, disAppear, reAppear, dead,none
 }
 
 class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, KeyboardHandler{
@@ -26,11 +27,13 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
   late final SpriteAnimation walkDownAnimation;
   late final SpriteAnimation disAppearAnimation;
   late final SpriteAnimation reAppearAnimation;
-
+  late final SpriteAnimation deadAnimation;
   final double stepTime = 0.10;
 
   List<CollisionBlocks> collisionBlocks = [];
-  
+  List<Saw> saws = [];
+
+  late bool isDead = false;
   late bool isMarked = false;
   late bool isFast = false;
   late bool isTelePort = false;
@@ -57,15 +60,17 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
     final isSpaceKeyPressed = keysPressed.contains(LogicalKeyboardKey.space);
 
 
-    if(!((isLeftKeyPressed && isUpKeyPressed) || (isLeftKeyPressed && isDownKeyPressed) ||(isRightKeyPressed && isUpKeyPressed) || (isRightKeyPressed && isDownKeyPressed)))
-    {
-      //right and left
-      horizontalMovement += isLeftKeyPressed? -1 : 0;
-      horizontalMovement += isRightKeyPressed? 1 : 0;
+    if(!isTelePort && !isDis){
+      if(!((isLeftKeyPressed && isUpKeyPressed) || (isLeftKeyPressed && isDownKeyPressed) ||(isRightKeyPressed && isUpKeyPressed) || (isRightKeyPressed && isDownKeyPressed)))
+      {
+        //right and left
+        horizontalMovement += isLeftKeyPressed? -1 : 0;
+        horizontalMovement += isRightKeyPressed? 1 : 0;
 
-      //up and down
-      verticalMovement += isDownKeyPressed? 1 : 0;
-      verticalMovement += isUpKeyPressed? -1 : 0;
+        //up and down
+        verticalMovement += isDownKeyPressed? 1 : 0;
+        verticalMovement += isUpKeyPressed? -1 : 0;
+      }
     }
 
     if(isSpaceKeyPressed){
@@ -104,6 +109,7 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
   void update(double dt) {
     _updatePlayerState();
     _updatePlayerMovement(dt);
+    _handleSawCollisions();
     _handleCollisions();
     super.update(dt);
   }
@@ -129,6 +135,8 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
     disAppearAnimation = _effectAnimation("disappear", 9);
     reAppearAnimation = _effectAnimation("reappear", 9);
 
+    deadAnimation = _spriteAnimation("death", 3);
+
     animations = {
       PlayerState.idleDown : idleDownAnimation,
 
@@ -138,7 +146,9 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
       PlayerState.walkLeft: walkLeftAnimation,
 
       PlayerState.reAppear: reAppearAnimation,
-      PlayerState.disAppear: disAppearAnimation
+      PlayerState.disAppear: disAppearAnimation,
+
+      PlayerState.dead: deadAnimation
 
     };
     current = PlayerState.idleDown;
@@ -184,6 +194,11 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
         isDis = false;
         position = markedPos;
       });
+    }
+    else if(isDead){
+      velocity.x = 0;
+      velocity.y = 0;
+      current = PlayerState.dead;
     }
     else if(velocity.x > 0){
       current = PlayerState.walkRight;
@@ -240,9 +255,34 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
     final playerHeight = playerHitBox.height;
 
     return ((playerY < block.y + block.height) &&
-            (playerHeight + playerY > block.y) &&
-            (playerX < block.x + block.width) &&
-            (playerWidth + playerX > block.x));
+        (playerHeight + playerY > block.y) &&
+        (playerX < block.x + block.width) &&
+        (playerWidth + playerX > block.x));
+  }
+
+  void _handleSawCollisions() {
+    for( final saw in saws){
+      if(_checkSawCollision(saw)){
+          isDead = true;
+          velocity.x = 0;
+          velocity.y = 0;
+          saw.moveSpeed = 0;
+      }
+    }
+  }
+
+  bool _checkSawCollision(Saw saw) {
+
+    final playerY = position.y + playerHitBox.offsetY;
+    final playerX = position.x + playerHitBox.offsetX;
+    final playerWidth = playerHitBox.width;
+    final playerHeight = playerHitBox.height;
+
+
+    return ((playerY < saw.y + saw.height) &&
+        (playerHeight + playerY > saw.y) &&
+        (playerX < saw.x + saw.width) &&
+        (playerWidth + playerX > saw.x));
   }
 
 }

@@ -61,7 +61,7 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
 
 
       'Main Characters/Paari/idle_down.png',
-
+      'Main Characters/Paari/death.png',
 
       'Main Characters/Paari/walk_down.png',
       'Main Characters/Paari/walk_up.png',
@@ -69,6 +69,7 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
       'Main Characters/Paari/walk_left.png',
 
       'Main Characters/Malala/idle_down.png',
+      'Main Characters/Malala/death.png',
 
       'Main Characters/Malala/walk_down.png',
       'Main Characters/Malala/walk_up.png',
