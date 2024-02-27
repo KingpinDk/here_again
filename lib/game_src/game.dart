@@ -1,21 +1,19 @@
 import 'dart:async';
-import 'dart:ui';
-import 'package:flame/camera.dart';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
-import 'package:flame/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'Components/level.dart';
 import 'Components/player.dart';
 
-
-class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbacks, TapCallbacks {
-
+class HereAgain extends FlameGame
+    with HasKeyboardHandlerComponents, DragCallbacks, TapCallbacks {
   late final CameraComponent cam;
   double height;
   double width;
@@ -24,10 +22,17 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
   bool isPc;
   bool isJoy;
   Player player;
+  int level;
 
   HereAgain(
-      {required this.player,required this.character, required this.isMobile, required this.isPc, this.isJoy = false, required this.height, required this.width});
-
+      {required this.player,
+      required this.character,
+      required this.level,
+      required this.isMobile,
+      required this.isPc,
+      this.isJoy = false,
+      required this.height,
+      required this.width});
 
   bool isMarked = false;
   bool isFast = false;
@@ -39,7 +44,6 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
 
   @override
   Color backgroundColor() => const Color(0xFF000000);
-
 
   @override
   void update(double dt) {
@@ -58,35 +62,25 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
       'Items/Boxes/Box1/idle.png',
       'Main Characters/disappear.png',
       'Main Characters/reappear.png',
-
-
       'Main Characters/Paari/idle_down.png',
       'Main Characters/Paari/death.png',
-
       'Main Characters/Paari/walk_down.png',
       'Main Characters/Paari/walk_up.png',
       'Main Characters/Paari/walk_right.png',
       'Main Characters/Paari/walk_left.png',
-
       'Main Characters/Malala/idle_down.png',
       'Main Characters/Malala/death.png',
-
       'Main Characters/Malala/walk_down.png',
       'Main Characters/Malala/walk_up.png',
       'Main Characters/Malala/walk_right.png',
       'Main Characters/Malala/walk_left.png',
       'Traps/Saw/On (38x38).png',
-
       'blindMask.png',
     ]);
-    mask = SpriteComponent.fromImage(
-        Flame.images.fromCache('blindMask.png'),
-        size: Vector2(1280, 720),
-        priority: 1000000000000000000
-    );
+    mask = SpriteComponent.fromImage(Flame.images.fromCache('blindMask.png'),
+        size: Vector2(1280, 720), priority: 1000000000000000000);
 
-
-    final world = Level(levelName: "level01.tmx", player: player);
+    final world = Level(levelName: "level1.tmx", player: player);
     cam = CameraComponent.withFixedResolution(
         world: world, width: 328, height: 186);
     cam.viewfinder.anchor = Anchor.center;
@@ -95,15 +89,13 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
     mask.position = player.position;
     world.add(mask);
 
-
     cam.follow(player);
     addSettings();
     addMusic();
     if (isMobile) {
       if (isJoy) {
         addJoyStick();
-      }
-      else {
+      } else {
         addDirController();
       }
       addToggleButton();
@@ -114,14 +106,9 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
   void addJoyStick() {
     joystick = JoystickComponent(
       priority: 45678234567,
-      knob: CircleComponent(
-          radius: 20,
-          paint: BasicPalette.darkGray.paint()
-      ),
+      knob: CircleComponent(radius: 20, paint: BasicPalette.darkGray.paint()),
       background: CircleComponent(
-          radius: 45,
-          paint: BasicPalette.gray.withAlpha(100).paint()
-      ),
+          radius: 45, paint: BasicPalette.gray.withAlpha(100).paint()),
       margin: const EdgeInsets.only(bottom: 32, left: 32),
     );
     add(joystick);
@@ -157,45 +144,39 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
   }
 
   void addToggleButton() async {
-
-    if(player.character == "Paari"){
+    if (player.character == "Paari") {
       final fastBtnLight = await Sprite.load('Controls/fast_grey.png');
       final fastBtnDark = await Sprite.load('Controls/fast_white.png');
       toggleButtonComponent = ToggleButtonComponent(
-        position: Vector2(width-120, height-150),
-        priority: 4567899876523,
-        onPressed: (){
-          if(isFast){
-            isFast = false;
-            player.moveSpeed = 225;
-          }
-          else{
-            isFast = true;
-            player.moveSpeed = 500;
-          }
-        },
-        defaultSelectedSkin:SpriteComponent(
-          sprite: fastBtnDark,
-        ),
-        defaultSkin: SpriteComponent(
+          position: Vector2(width - 120, height - 150),
+          priority: 4567899876523,
+          onPressed: () {
+            if (isFast) {
+              isFast = false;
+              player.moveSpeed = 225;
+            } else {
+              isFast = true;
+              player.moveSpeed = 500;
+            }
+          },
+          defaultSelectedSkin: SpriteComponent(
+            sprite: fastBtnDark,
+          ),
+          defaultSkin: SpriteComponent(
             sprite: fastBtnLight,
-        )
-      );
-    }
-    else{
+          ));
+    } else {
       final teleBtnLight = await Sprite.load('Controls/teleport_grey.png');
       final teleBtnDark = await Sprite.load('Controls/teleport_white.png');
 
       toggleButtonComponent = ToggleButtonComponent(
-        position: Vector2(width-120, height-150),
+        position: Vector2(width - 120, height - 150),
         priority: 4567899876523,
-        onPressed: (){
-
-          if(isMarked){
+        onPressed: () {
+          if (isMarked) {
             isMarked = false;
             player.isTelePort = true;
-          }
-          else{
+          } else {
             isMarked = true;
             player.markedPos = Vector2.copy(player.position);
           }
@@ -204,81 +185,79 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
           sprite: teleBtnLight,
         ),
         defaultSkin: SpriteComponent(
-            sprite: teleBtnDark,
+          sprite: teleBtnDark,
         ),
       );
-
     }
-
-
 
     add(toggleButtonComponent);
   }
 
   Future<void> addDirController() async {
-
     final rightBtnSprite = await Sprite.load('Controls/right_white.png');
     final tapRightBtnSprite = await Sprite.load('Controls/right_grey.png');
-    addButton(rightBtnSprite, tapRightBtnSprite, (){if(player.verticalMovement == 0)player.horizontalMovement = 1;}, 130, 90);
+    addButton(rightBtnSprite, tapRightBtnSprite, () {
+      if (player.verticalMovement == 0) player.horizontalMovement = 1;
+    }, 130, 90);
 
     final leftBtnSprite = await Sprite.load('Controls/left_white.png');
     final tapLeftBtnSprite = await Sprite.load('Controls/left_grey.png');
-    addButton(leftBtnSprite, tapLeftBtnSprite, (){if(player.verticalMovement == 0)player.horizontalMovement = -1;}, 10, 90);
+    addButton(leftBtnSprite, tapLeftBtnSprite, () {
+      if (player.verticalMovement == 0) player.horizontalMovement = -1;
+    }, 10, 90);
 
     final upBtnSprite = await Sprite.load('Controls/up_white.png');
     final tapUpBtnSprite = await Sprite.load('Controls/up_grey.png');
-    addButton(upBtnSprite, tapUpBtnSprite, (){if(player.horizontalMovement == 0)player.verticalMovement = -1;}, 70, 150);
+    addButton(upBtnSprite, tapUpBtnSprite, () {
+      if (player.horizontalMovement == 0) player.verticalMovement = -1;
+    }, 70, 150);
 
     final downBtnSprite = await Sprite.load('Controls/down_white.png');
     final tapDownBtnSprite = await Sprite.load('Controls/down_grey.png');
-    addButton(downBtnSprite, tapDownBtnSprite, (){if(player.horizontalMovement == 0)player.verticalMovement = 1;}, 70, 30);
-
-
+    addButton(downBtnSprite, tapDownBtnSprite, () {
+      if (player.horizontalMovement == 0) player.verticalMovement = 1;
+    }, 70, 30);
   }
-  void addButton(Sprite idle, Sprite tapped, onTap, double left, double bottom){
-    controlBtn = HudButtonComponent(
-      margin: EdgeInsets.only(left: left, bottom: bottom),
 
+  void addButton(
+      Sprite idle, Sprite tapped, onTap, double left, double bottom) {
+    controlBtn = HudButtonComponent(
+        margin: EdgeInsets.only(left: left, bottom: bottom),
         priority: 4556786789,
-        button: SpriteComponent(
-          size: Vector2.all(65),
-            sprite: idle
-        ),
+        button: SpriteComponent(size: Vector2.all(65), sprite: idle),
         buttonDown: SpriteComponent(
-            sprite: tapped,
+          sprite: tapped,
           size: Vector2.all(70),
         ),
-      onPressed: onTap,
-      onReleased: (){
-        player.horizontalMovement = 0;
-        player.verticalMovement = 0;
-      }
-    );
+        onPressed: onTap,
+        onReleased: () {
+          player.horizontalMovement = 0;
+          player.verticalMovement = 0;
+        });
     add(controlBtn);
   }
 
-  void addSettings() async{
+  void addSettings() async {
     final settings = await Sprite.load('Controls/settings_white.png');
     final settingsOnTap = await Sprite.load('Controls/settings_grey.png');
 
     final settingsHud = HudButtonComponent(
       priority: 456782345678678,
-      button: SpriteComponent( sprite:  settings, size: Vector2.all(32)),
-      buttonDown: SpriteComponent(sprite: settingsOnTap, size: Vector2.all(34) ),
+      button: SpriteComponent(sprite: settings, size: Vector2.all(32)),
+      buttonDown: SpriteComponent(sprite: settingsOnTap, size: Vector2.all(34)),
       margin: const EdgeInsets.only(top: 21, right: 21),
-
     );
     add(settingsHud);
   }
 
-  void addMusic() async{
+  void addMusic() async {
     bool isOn = true;
     final musicOn = await Sprite.load('Controls/music_on.png');
     final musicOff = await Sprite.load('Controls/music_off.png');
 
     final musicToggle = ToggleButtonComponent(
       priority: 4567890987654,
-      size:Vector2.all(32),
+      size: Vector2.all(32),
       defaultSkin: SpriteComponent(sprite: musicOn),
       defaultSelectedSkin: SpriteComponent(sprite: musicOff),
       position: Vector2(21, 21),
@@ -286,4 +265,3 @@ class HereAgain extends FlameGame with HasKeyboardHandlerComponents, DragCallbac
     add(musicToggle);
   }
 }
-

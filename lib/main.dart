@@ -11,6 +11,11 @@ void main() async{
   runApp(
       MaterialApp(
         debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primaryColor: Colors.white30,
+            splashColor: Colors.white30,
+            hoverColor: Colors.white30
+          ),
           home:Home(),
       )
   );

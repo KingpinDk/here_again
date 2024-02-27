@@ -1,0 +1,70 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "level1.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInEditor": 1
+        },
+        "#dark_dungeon_tileset": {
+            "scaleInDock": 1
+        },
+        "dark_dungeon_tileset.tsx": {
+            "scaleInDock": 3.6248,
+            "scaleInEditor": 1
+        },
+        "kenny_tilemap.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "level1.tmx": {
+            "scale": 1.1503,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 116.4913500825871,
+                "y": 412.93575588976785
+            }
+        },
+        "level1.tmx#dark_dungeon_tilemap": {
+            "scaleInDock": 1.3206
+        },
+        "test.tmx": {
+            "scale": 4.303,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 512.4331861491983,
+                "y": 211.24796653497557
+            }
+        }
+    },
+    "last.externalTilesetPath": "C:/Users/kumar/FlutterProjects/Here Again/assets/tiles",
+    "last.imagePath": "C:/Users/kumar/FlutterProjects/Here Again/assets/images/Terrain",
+    "map.height": 46,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 46,
+    "openFiles": [
+        "level1.tmx"
+    ],
+    "project": "HereAgain.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "level1.tmx",
+        "dark_dungeon_tileset.tsx",
+        "test.tmx",
+        "kenny_tilemap.tsx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.spacing": 0,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
