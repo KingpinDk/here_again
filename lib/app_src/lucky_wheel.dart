@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flame_audio/flame_audio.dart';
@@ -153,32 +152,32 @@ class _LuckyWheelState extends State<LuckyWheel> {
     super.initState();
   }
 
-  void startTimer() {
-    const oneDay = 86400; // Number of seconds in a day
-    if (_isMounted) {
-      setState(() {
-        isTimerRunning = true;
-        secondsRemaining = oneDay;
-      });
-    } else {
-      isTimerRunning = true;
-      secondsRemaining = oneDay;
-    }
-
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_isMounted) {
-        setState(() {
-          if (secondsRemaining < 1) {
-            timer.cancel();
-            todayCard = getRandomCard(0, txtTitle.length - 1);
-            isTimerRunning = false;
-          } else {
-            secondsRemaining--;
-          }
-        });
-      }
-    });
-  }
+  // void startTimer() {
+  //   const oneDay = 86400; // Number of seconds in a day
+  //   if (_isMounted) {
+  //     setState(() {
+  //       isTimerRunning = true;
+  //       secondsRemaining = oneDay;
+  //     });
+  //   } else {
+  //     isTimerRunning = true;
+  //     secondsRemaining = oneDay;
+  //   }
+  //
+  //   Timer.periodic(const Duration(seconds: 1), (timer) {
+  //     if (_isMounted) {
+  //       setState(() {
+  //         if (secondsRemaining < 1) {
+  //           timer.cancel();
+  //           todayCard = getRandomCard(0, txtTitle.length - 1);
+  //           isTimerRunning = false;
+  //         } else {
+  //           secondsRemaining--;
+  //         }
+  //       });
+  //     }
+  //   });
+  // }
 
   late var todayCard = 0;
 
@@ -273,21 +272,23 @@ class _LuckyWheelState extends State<LuckyWheel> {
         width: 160,
         child: ElevatedButton(
           onPressed: () {
-            if (!isTimerRunning) {
-              chosen.add(Fortune.randomInt(0, txtTitle.length - 1));
-              startTimer();
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Center(
-                  child: Text(
-                    "Come after ${(secondsRemaining ~/ 3600).toString().padLeft(2, '0')}:${((secondsRemaining % 3600) ~/ 60).toString().padLeft(2, '0')}:${(secondsRemaining % 60).toString().padLeft(2, '0')}",
-                    style: TextStyle(
-                        fontFamily: "Edo", fontSize: 30, color: Colors.red),
-                  ),
-                ),
-                backgroundColor: Colors.transparent,
-              ));
-            }
+            chosen.add(Fortune.randomInt(0, txtTitle.length - 1));
+            // startTimer();
+            // if (!isTimerRunning) {
+            //   chosen.add(Fortune.randomInt(0, txtTitle.length - 1));
+            //   startTimer();
+            // } else {
+            //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //     content: Center(
+            //       child: Text(
+            //         "Come after ${(secondsRemaining ~/ 3600).toString().padLeft(2, '0')}:${((secondsRemaining % 3600) ~/ 60).toString().padLeft(2, '0')}:${(secondsRemaining % 60).toString().padLeft(2, '0')}",
+            //         style: TextStyle(
+            //             fontFamily: "Edo", fontSize: 30, color: Colors.red),
+            //       ),
+            //     ),
+            //     backgroundColor: Colors.transparent,
+            //   ));
+            // }
           },
           child: isTimerRunning
               ? Text(

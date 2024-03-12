@@ -22,7 +22,7 @@ class _CollectiblesState extends State<Collectibles> {
     isMusic = widget.prefs.getBool("isMusic") ?? false;
     isSfx = widget.prefs.getBool("isSfx") ?? false;
     isPaari = widget.prefs.getBool("isPaari") ?? true;
-    waterDrop = widget.prefs.getInt("waterDrop") ?? 30;
+    waterDrop = widget.prefs.getInt("waterDrops") ?? 30;
     return Scaffold(
         body: Stack(
       children: [

@@ -150,7 +150,11 @@
  </objectgroup>
  <objectgroup id="3" name="Spawnpoints">
   <object id="72" name="Player" type="Player" x="96" y="304"/>
-  <object id="75" name="Box" type="Box" x="880" y="416" width="16" height="16"/>
+  <object id="75" name="Box" type="Box" x="880" y="416" width="16" height="16">
+   <properties>
+    <property name="hasKey" type="bool" value="false"/>
+   </properties>
+  </object>
   <object id="77" name="Saw" type="Saw" x="144" y="144" width="16" height="16">
    <properties>
     <property name="isVertical" type="bool" value="true"/>

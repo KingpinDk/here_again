@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:here_again/game_src/game.dart';
 
 import '../../overlays/task_button.dart';
+import '../../overlays/won_menu.dart';
 
 enum WaterTapState { opened, closed }
 
@@ -53,7 +54,6 @@ class WaterTap extends SpriteAnimationGroupComponent
 
   void _handlePlayerTapCollision() {
     if (checkPlayerTapCollision()) {
-      print("player collided with tap");
       gameRef.overlays.add(TaskButton.id);
     } else {
       if (gameRef.overlays.activeOverlays.contains(TaskButton.id)) {
@@ -84,12 +84,17 @@ class WaterTap extends SpriteAnimationGroupComponent
         (playerWidth + playerX > tapX));
   }
 
-  void turnOffTap() {
+  Future<void> turnOffTap() async {
     if (gameRef.taskComplete == true) {
       current = SpriteAnimation.fromFrameData(
           game.images.fromCache("Tasks/tap_closed.png"),
           SpriteAnimationData.sequenced(
               amount: 1, stepTime: stepTime, textureSize: Vector2(16, 32)));
+      gameRef.taskComplete = false;
+      await Future.delayed(const Duration(milliseconds: 400));
+      removeFromParent();
+      gameRef.pauseEngine();
+      gameRef.overlays.add(WonMenu.id);
     }
   }
 }

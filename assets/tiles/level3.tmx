@@ -148,11 +148,11 @@
     <property name="offPos" type="float" value="15"/>
    </properties>
   </object>
-  <object id="89" name="Saw" type="Saw" x="976" y="288" width="16" height="16">
+  <object id="89" name="Saw" type="Saw" x="976" y="320" width="16" height="16">
    <properties>
     <property name="isVertical" type="bool" value="true"/>
     <property name="offNeg" type="float" value="0"/>
-    <property name="offPos" type="float" value="18"/>
+    <property name="offPos" type="float" value="15"/>
    </properties>
   </object>
   <object id="90" name="Saw" type="Saw" x="1024" y="496" width="16" height="16">

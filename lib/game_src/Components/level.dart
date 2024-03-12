@@ -101,7 +101,7 @@ class Level extends World with HasGameRef<HereAgain> {
           add(saw);
           break;
         case 'Box':
-          final hasKey = sp.properties.getValue("hasKey");
+          final hasKey = sp.properties.getValue("hasKey") ?? false;
           final box = Box(
               hasKey: hasKey,
               player: player,

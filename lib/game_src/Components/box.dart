@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:here_again/game_src/Components/player.dart';
 import 'package:here_again/game_src/Components/saw.dart';
 import 'package:here_again/game_src/game.dart';
@@ -194,7 +193,6 @@ class Box extends SpriteAnimationGroupComponent with HasGameRef<HereAgain> {
   void _handleBoxSawInteraction() async {
     for (final saw in saws) {
       if (_checkBoxSawCollision(saw)) {
-        if (gameRef.isSfx) FlameAudio.play("btnClick.wav");
         current = BoxState.broke;
         await Future.delayed(Duration(milliseconds: 400));
         if (hasKey) {
@@ -203,8 +201,8 @@ class Box extends SpriteAnimationGroupComponent with HasGameRef<HereAgain> {
           current = BoxState.key;
           await Future.delayed(Duration(milliseconds: 400));
           gameRef.keyCollected = true;
-          removeFromParent();
         }
+        removeFromParent();
       }
     }
   }

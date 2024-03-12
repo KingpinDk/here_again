@@ -30,7 +30,7 @@ class LevelsScreen extends StatefulWidget {
 }
 
 class _LevelsScreenState extends State<LevelsScreen> {
-  final int enabled = 21;
+  final int enabled = 15;
 
   late bool isMusic, isSfx, isJoystick, isPaari;
   late int waterDrops;
@@ -193,6 +193,7 @@ class _LevelsScreenState extends State<LevelsScreen> {
                                         GameSnackBar(gameRef: gameRef),
                               },
                               game: HereAgain(
+                                  isJoy: isJoystick,
                                   prefs: widget.prefs,
                                   isMusic: isMusic,
                                   isSfx: isSfx,
@@ -211,7 +212,7 @@ class _LevelsScreenState extends State<LevelsScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Center(
                           child: Text(
-                        "Complete the Level ${level - 1} to unlock",
+                        "Coming soon! in the alpha version",
                         style: TextStyle(
                             fontFamily: "Edo", fontSize: 20, color: Colors.red),
                       )),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -71,7 +73,8 @@ class _SettingsState extends State<Settings> {
                 children: [
                   sfxSettings(),
                   musicSettings(),
-                  controlSettings(),
+                  if (Platform.isAndroid || Platform.isIOS) controlSettings(),
+                  if (!Platform.isAndroid && !Platform.isIOS) Controls(),
                 ],
               ),
             ),
@@ -197,5 +200,57 @@ class _SettingsState extends State<Settings> {
         ),
       ),
     );
+  }
+
+  Widget Controls() {
+    return Container(
+        margin: EdgeInsets.all(20),
+        width: 500,
+        decoration: BoxDecoration(
+            color: Colors.white12,
+            borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+            shape: BoxShape.rectangle),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  "Controls",
+                  style: TextStyle(
+                      fontSize: 20.0, color: Colors.white38, fontFamily: "Edo"),
+                ),
+              ),
+              Text(
+                "A or left arrow to move left",
+                style: TextStyle(
+                    fontSize: 20.0, color: Colors.red, fontFamily: "Edo"),
+              ),
+              Text(
+                "S or down arrow to move down",
+                style: TextStyle(
+                    fontSize: 20.0, color: Colors.red, fontFamily: "Edo"),
+              ),
+              Text(
+                "D or right arrow to move right",
+                style: TextStyle(
+                    fontSize: 20.0, color: Colors.red, fontFamily: "Edo"),
+              ),
+              Text(
+                "w or up arrow to move up",
+                style: TextStyle(
+                    fontSize: 20.0, color: Colors.red, fontFamily: "Edo"),
+              ),
+              Text(
+                "Space for powerup",
+                style: TextStyle(
+                    fontSize: 20.0, color: Colors.red, fontFamily: "Edo"),
+              ),
+            ],
+          ),
+        ));
   }
 }
