@@ -1,23 +1,34 @@
 import 'dart:async';
+
 import 'package:flame/collisions.dart';
+import 'package:flame/components.dart';
+import 'package:flame_audio/flame_audio.dart';
+import 'package:flutter/services.dart';
 import 'package:here_again/game_src/Components/player_hitbox.dart';
 import 'package:here_again/game_src/Components/saw.dart';
 import 'package:here_again/game_src/game.dart';
-import 'package:flame/components.dart';
-import 'package:flutter/services.dart';
+
+import '../../overlays/lost_menu.dart';
 import 'collision_block.dart';
 
-
 enum PlayerState {
-  idleDown,  walkRight, walkLeft, walkUp, walkDown, disAppear, reAppear, dead,none
+  idleDown,
+  walkRight,
+  walkLeft,
+  walkUp,
+  walkDown,
+  disAppear,
+  reAppear,
+  dead,
+  none
 }
 
-class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, KeyboardHandler{
-
+class Player extends SpriteAnimationGroupComponent
+    with HasGameRef<HereAgain>, KeyboardHandler {
   String character;
-  PlayerHitBox playerHitBox = PlayerHitBox(offsetX: 2, offsetY: 3, width: 12, height: 20);
-  Player({this.character = 'Paari', position}):super(position: position);
-
+  PlayerHitBox playerHitBox =
+      PlayerHitBox(offsetX: 2, offsetY: 3, width: 12, height: 20);
+  Player({this.character = 'Greta', position}) : super(position: position);
 
   late final SpriteAnimation idleDownAnimation;
 
@@ -59,51 +70,44 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
         keysPressed.contains(LogicalKeyboardKey.arrowDown);
     final isSpaceKeyPressed = keysPressed.contains(LogicalKeyboardKey.space);
 
-
-    if(!isTelePort && !isDis){
-      if(!((isLeftKeyPressed && isUpKeyPressed) || (isLeftKeyPressed && isDownKeyPressed) ||(isRightKeyPressed && isUpKeyPressed) || (isRightKeyPressed && isDownKeyPressed)))
-      {
+    if (!isTelePort && !isDis) {
+      if (!((isLeftKeyPressed && isUpKeyPressed) ||
+          (isLeftKeyPressed && isDownKeyPressed) ||
+          (isRightKeyPressed && isUpKeyPressed) ||
+          (isRightKeyPressed && isDownKeyPressed))) {
         //right and left
-        horizontalMovement += isLeftKeyPressed? -1 : 0;
-        horizontalMovement += isRightKeyPressed? 1 : 0;
+        horizontalMovement += isLeftKeyPressed ? -1 : 0;
+        horizontalMovement += isRightKeyPressed ? 1 : 0;
 
         //up and down
-        verticalMovement += isDownKeyPressed? 1 : 0;
-        verticalMovement += isUpKeyPressed? -1 : 0;
+        verticalMovement += isDownKeyPressed ? 1 : 0;
+        verticalMovement += isUpKeyPressed ? -1 : 0;
       }
     }
 
-    if(isSpaceKeyPressed){
-
-      if(character == 'Paari'){
-        if(isFast){
+    if (isSpaceKeyPressed) {
+      if (character == 'Paari') {
+        if (gameRef.isSfx) FlameAudio.play("powerup_paari.wav");
+        if (isFast) {
           isFast = false;
           moveSpeed = 225;
-
-        }
-        else{
+        } else {
           isFast = true;
           moveSpeed = 500;
-
         }
-      }
-      else{
-        if(isMarked){
+      } else {
+        if (isMarked) {
           isMarked = false;
           isTelePort = true;
-        }
-        else{
+        } else {
           isMarked = true;
           markedPos = Vector2.copy(position);
-
         }
       }
     }
-
 
     return super.onKeyEvent(event, keysPressed);
   }
-
 
   @override
   void update(double dt) {
@@ -116,13 +120,10 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
 
   @override
   FutureOr<void> onLoad() {
-    //debugMode = true;
     _loadAllAnimation();
-    add(RectangleHitbox(position: Vector2(2, 3), size: Vector2(12,20)));
+    add(RectangleHitbox(position: Vector2(2, 3), size: Vector2(12, 20)));
     return super.onLoad();
   }
-
-
 
   Future<void> _loadAllAnimation() async {
     idleDownAnimation = _spriteAnimation("idle_down", 6);
@@ -138,31 +139,30 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
     deadAnimation = _spriteAnimation("death", 3);
 
     animations = {
-      PlayerState.idleDown : idleDownAnimation,
-
+      PlayerState.idleDown: idleDownAnimation,
       PlayerState.walkUp: walkUpAnimation,
       PlayerState.walkDown: walkDownAnimation,
       PlayerState.walkRight: walkRightAnimation,
       PlayerState.walkLeft: walkLeftAnimation,
-
       PlayerState.reAppear: reAppearAnimation,
       PlayerState.disAppear: disAppearAnimation,
-
       PlayerState.dead: deadAnimation
-
     };
     current = PlayerState.idleDown;
   }
 
-  SpriteAnimation _effectAnimation(String state, int amt){
+  SpriteAnimation _effectAnimation(String state, int amt) {
     return SpriteAnimation.fromFrameData(
         game.images.fromCache('Main Characters/$state.png'),
-        SpriteAnimationData.sequenced(amount: amt, stepTime: 0.15, textureSize: Vector2(16,24)));
+        SpriteAnimationData.sequenced(
+            amount: amt, stepTime: 0.15, textureSize: Vector2(16, 24)));
   }
-  SpriteAnimation _spriteAnimation(String state, int amt){
+
+  SpriteAnimation _spriteAnimation(String state, int amt) {
     return SpriteAnimation.fromFrameData(
         game.images.fromCache('Main Characters/$character/$state.png'),
-        SpriteAnimationData.sequenced(amount: amt, stepTime: stepTime, textureSize: Vector2(16,24)));
+        SpriteAnimationData.sequenced(
+            amount: amt, stepTime: stepTime, textureSize: Vector2(16, 24)));
   }
 
   void _updatePlayerMovement(double dt) {
@@ -173,82 +173,72 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
     position.y += velocity.y * dt;
   }
 
-
   Future<void> _updatePlayerState() async {
-    if(isTelePort){
+    if (isTelePort) {
       velocity.x = 0;
       velocity.y = 0;
       current = PlayerState.disAppear;
-      await Future.delayed(const Duration(milliseconds: 1350),(){
-      isTelePort = false;
-      position = markedPos;
-       isDis = true;
+      if (gameRef.isSfx) FlameAudio.play("teleportDisappear.wav", volume: 0.5);
+      await Future.delayed(const Duration(milliseconds: 1350), () {
+        isTelePort = false;
+        position = markedPos;
+        isDis = true;
       });
-
-    }
-    else if(isDis){
+    } else if (isDis) {
       velocity.x = 0;
       velocity.y = 0;
       current = PlayerState.reAppear;
-      await Future.delayed(const Duration(milliseconds: 1350),(){
+      if (gameRef.isSfx) FlameAudio.play("teleportAppear.wav", volume: 0.5);
+      await Future.delayed(const Duration(milliseconds: 1350), () {
         isDis = false;
         position = markedPos;
       });
-    }
-    else if(isDead){
+    } else if (isDead) {
+      if (gameRef.isSfx) FlameAudio.play("death.wav");
       velocity.x = 0;
       velocity.y = 0;
       current = PlayerState.dead;
-    }
-    else if(velocity.x > 0){
+      await Future.delayed(const Duration(milliseconds: 100));
+      gameRef.pauseEngine();
+      gameRef.overlays.add(LostMenu.id);
+    } else if (velocity.x > 0) {
       current = PlayerState.walkRight;
-    }
-    else if(velocity.x < 0){
+    } else if (velocity.x < 0) {
       current = PlayerState.walkLeft;
-    }
-    else if(velocity.y < 0){
+    } else if (velocity.y < 0) {
       current = PlayerState.walkUp;
-    }
-    else if(velocity.y > 0){
+    } else if (velocity.y > 0) {
       current = PlayerState.walkDown;
-    }
-    else{
+    } else {
       current = PlayerState.idleDown;
     }
-
   }
 
   void _handleCollisions() {
-    for(final block in collisionBlocks){
-      if(_checkCollision(block)){
-
-          if(velocity.x > 0){
-            //right
-            velocity.x = 0;
-            position.x = block.x - (playerHitBox.width + playerHitBox.offsetX);
-          }
-          else if(velocity.x < 0){
-            //left
-            velocity.x = 0;
-            position.x = block.x + block.width - playerHitBox.offsetX;
-          }
-          else if(velocity.y < 0){
-            //up
-            velocity.y = 0;
-            position.y = block.y + block.height - playerHitBox.offsetY;
-          }
-          else if(velocity.y > 0){
-            //down
-            velocity.y = 0;
-            position.y = block.y - (playerHitBox.height + playerHitBox.offsetY);
-          }
+    for (final block in collisionBlocks) {
+      if (_checkCollision(block)) {
+        if (velocity.x > 0) {
+          //right
+          velocity.x = 0;
+          position.x = block.x - (playerHitBox.width + playerHitBox.offsetX);
+        } else if (velocity.x < 0) {
+          //left
+          velocity.x = 0;
+          position.x = block.x + block.width - playerHitBox.offsetX;
+        } else if (velocity.y < 0) {
+          //up
+          velocity.y = 0;
+          position.y = block.y + block.height - playerHitBox.offsetY;
+        } else if (velocity.y > 0) {
+          //down
+          velocity.y = 0;
+          position.y = block.y - (playerHitBox.height + playerHitBox.offsetY);
+        }
       }
     }
   }
 
-
-  bool _checkCollision(CollisionBlocks block){
-
+  bool _checkCollision(CollisionBlocks block) {
     final playerY = position.y + playerHitBox.offsetY;
     final playerX = position.x + playerHitBox.offsetX;
     final playerWidth = playerHitBox.width;
@@ -261,29 +251,25 @@ class Player extends SpriteAnimationGroupComponent with HasGameRef<HereAgain>, K
   }
 
   void _handleSawCollisions() {
-    for( final saw in saws){
-      if(_checkSawCollision(saw)){
-          isDead = true;
-          velocity.x = 0;
-          velocity.y = 0;
-          saw.moveSpeed = 0;
+    for (final saw in saws) {
+      if (_checkSawCollision(saw)) {
+        isDead = true;
+        velocity.x = 0;
+        velocity.y = 0;
+        saw.moveSpeed = 0;
       }
     }
   }
 
   bool _checkSawCollision(Saw saw) {
-
     final playerY = position.y + playerHitBox.offsetY;
     final playerX = position.x + playerHitBox.offsetX;
     final playerWidth = playerHitBox.width;
     final playerHeight = playerHitBox.height;
-
 
     return ((playerY < saw.y + saw.height) &&
         (playerHeight + playerY > saw.y) &&
         (playerX < saw.x + saw.width) &&
         (playerWidth + playerX > saw.x));
   }
-
 }
-

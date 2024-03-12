@@ -44,6 +44,8 @@ dependencies:
   flutter_fortune_wheel: ^1.3.1
   url_launcher: ^6.2.5
   rxdart: ^0.27.7
+  flame_audio: ^1.3.3
+
 
 dev_dependencies:
   flutter_test:
@@ -69,18 +71,25 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/images/Doors/
+    - assets/images/Tasks/
     - assets/images/Profile/
+    - assets/images/Gates/
+    - assets/images/Facesets/
     - assets/images/Controls/
     - assets/images/Items/Boxes/Box1/
+    - assets/images/Items/Fruits/
+    - assets/images/Items/Key/
     - assets/images/Terrain/
     - assets/images/Background/
     - assets/images/Main Characters/
     - assets/images/Collectibles/
     - assets/images/Main Characters/Paari/
-    - assets/images/Main Characters/Malala/
+    - assets/images/Main Characters/Greta/
     - assets/images/Menu/Buttons/
     - assets/images/Menu/Levels/
     - assets/images/Traps/Saw/
+    - assets/audio/
     - assets/tiles/
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -6,14 +6,18 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:here_again/game_src/Components/items_collected.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Components/game_bar.dart';
 import 'Components/level.dart';
+import 'Components/light.dart';
 import 'Components/player.dart';
 
 class HereAgain extends FlameGame
-    with HasKeyboardHandlerComponents, DragCallbacks, TapCallbacks {
+    with HasKeyboardHandlerComponents, TapCallbacks, DragCallbacks {
   late final CameraComponent cam;
   double height;
   double width;
@@ -23,6 +27,9 @@ class HereAgain extends FlameGame
   bool isJoy;
   Player player;
   int level;
+  bool isMusic;
+  bool isSfx;
+  SharedPreferences prefs;
 
   HereAgain(
       {required this.player,
@@ -30,17 +37,83 @@ class HereAgain extends FlameGame
       required this.level,
       required this.isMobile,
       required this.isPc,
+      this.isMusic = false,
+      this.isSfx = false,
       this.isJoy = false,
       required this.height,
-      required this.width});
+      required this.width,
+      required this.prefs});
 
   bool isMarked = false;
   bool isFast = false;
+
+  bool keyCollected = false;
+  bool seedCollected = false;
+  int dropCollected = 0;
+
   late JoystickComponent joystick;
   late SpriteComponent mask;
   late HudButtonComponent controlBtn;
   late ToggleButtonComponent toggleButtonComponent;
   late Vector2 screenSize;
+  List<String> hints = [
+    "Use Hand On Wall Rule",
+    "press the focus\nmarker with the box",
+    "Tricky Box Movement",
+    "Focus Marker is invisible!!",
+    "place the box on\ntriangle button",
+    "press the triangle button",
+    "open pause Menu",
+    "use key to open the gate",
+    "seed is invisible",
+    "press the door",
+    "key is invisible",
+    "think inside the box",
+    "Enter Dark void",
+    "fair & simple",
+    "Think Outside the map",
+  ];
+  List<String> missions = [
+    "Fire Produces CO2\nFind and Put out\nthe fire before\nO2 runs out!!",
+    "Put out the\nfire before\nO2 runs out!!\nBe aware of Blades",
+    "Someone left the\nwater taps open\nclose them before\nwater runs out",
+    "close the water\ntaps Focus marker\nis hidden ",
+    "Electric light is kept\non for no reason\nuse triangle button to turn\nit off before power\nruns out!!",
+    "Electric light is kept\non for no reason\nuse triangle button to turn\nit off before power\nruns out!!",
+    "Electric light is kept\non for no reason\nuse triangle button to turn\nit off before power\nruns out!!",
+    "You need seeds\nfor planting\nfind them",
+    "You need seeds\nfor planting\nfind them",
+    "You need seeds\nfor planting\nfind them",
+    "find the place\nfor planting\nthe seeds",
+    "find the place\nfor planting\nthe seeds",
+    "find the place\nfor planting\nthe seeds",
+    "Collect 20 water\ndrops and water\nthe plants",
+    "Collect 21 water\ndrops and water\nthe plants",
+  ];
+  bool taskComplete = false;
+  List<String> tasks = [
+    "Put Out Fire",
+    "Put Out Fire",
+    "Turn Off the tap",
+    "Turn Off the tap",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "Plant the Seed",
+    "Plant the Seeds",
+    "Plant the Seeds",
+    "Water the plants",
+    "Water the plants",
+    "Water the plants",
+  ];
+  late GameBar _gameBar;
+  late Light light;
+  late String gameSnackBar = "";
+  late int itemsCollected = 0;
+  late String itemStr = "Seeds";
 
   @override
   Color backgroundColor() => const Color(0xFF000000);
@@ -53,6 +126,7 @@ class HereAgain extends FlameGame
       }
     }
     mask.position = player.position - Vector2(632, 348);
+    cam.follow(player);
     super.update(dt);
   }
 
@@ -60,6 +134,29 @@ class HereAgain extends FlameGame
   FutureOr<void> onLoad() async {
     await images.loadAll([
       'Items/Boxes/Box1/idle.png',
+      'Items/Boxes/Box1/box_break.png',
+      'Items/Boxes/Box1/box_idle.png',
+      'Items/Fruits/water_drops.png',
+      'Items/Fruits/Collected.png',
+      'Items/Fruits/seed.png',
+      'Items/Key/key.png',
+      'Doors/door_closed.png',
+      'Doors/door_closing.png',
+      'Doors/door_opened.png',
+      'Doors/door_opening.png',
+      'Tasks/light_off.png',
+      'Tasks/light_on.png',
+      'Tasks/tap_opened.png',
+      'Tasks/tap_closed.png',
+      'Tasks/fire_extinguished.png',
+      'Tasks/plant_grow.png',
+      'Tasks/plant_still.png',
+      'Tasks/plant_water_grow.png',
+      'Tasks/fire_smoke.png',
+      'Gates/gate_close.png',
+      'Gates/gate_closed.png',
+      'Gates/gate_open.png',
+      'Gates/gate_opened.png',
       'Main Characters/disappear.png',
       'Main Characters/reappear.png',
       'Main Characters/Paari/idle_down.png',
@@ -68,19 +165,36 @@ class HereAgain extends FlameGame
       'Main Characters/Paari/walk_up.png',
       'Main Characters/Paari/walk_right.png',
       'Main Characters/Paari/walk_left.png',
-      'Main Characters/Malala/idle_down.png',
-      'Main Characters/Malala/death.png',
-      'Main Characters/Malala/walk_down.png',
-      'Main Characters/Malala/walk_up.png',
-      'Main Characters/Malala/walk_right.png',
-      'Main Characters/Malala/walk_left.png',
+      'Main Characters/Greta/idle_down.png',
+      'Main Characters/Greta/death.png',
+      'Main Characters/Greta/walk_down.png',
+      'Main Characters/Greta/walk_up.png',
+      'Main Characters/Greta/walk_right.png',
+      'Main Characters/Greta/walk_left.png',
       'Traps/Saw/On (38x38).png',
       'blindMask.png',
     ]);
-    mask = SpriteComponent.fromImage(Flame.images.fromCache('blindMask.png'),
-        size: Vector2(1280, 720), priority: 1000000000000000000);
 
-    final world = Level(levelName: "level1.tmx", player: player);
+    if (level == 8 || level == 9 || level == 10) {
+      itemStr = "Seeds";
+      add(ItemsCollected(itemStr, itemsCollected.toString()));
+    } else if (level == 11) {
+      itemStr = "Keys";
+      add(ItemsCollected(itemStr, itemsCollected.toString()));
+    } else if (level == 14 || level == 15) {
+      itemStr = "Water Drops";
+      add(ItemsCollected(itemsCollected.toString(), itemStr));
+    }
+
+    if (level >= 1 && level <= 7) {
+      _gameBar = GameBar(x: 150, y: 21);
+      add(_gameBar);
+      addOverlayIcon(level);
+    }
+    mask = SpriteComponent.fromImage(Flame.images.fromCache('blindMask.png'),
+        size: Vector2(1280, 720), priority: 10000000000);
+
+    final world = Level(levelName: "level$level.tmx", player: player);
     cam = CameraComponent.withFixedResolution(
         world: world, width: 328, height: 186);
     cam.viewfinder.anchor = Anchor.center;
@@ -90,8 +204,7 @@ class HereAgain extends FlameGame
     world.add(mask);
 
     cam.follow(player);
-    addSettings();
-    addMusic();
+
     if (isMobile) {
       if (isJoy) {
         addJoyStick();
@@ -100,6 +213,7 @@ class HereAgain extends FlameGame
       }
       addToggleButton();
     }
+    if (isMusic) FlameAudio.bgm.play("21-Dungeon.wav", volume: 0.1);
     return super.onLoad();
   }
 
@@ -151,6 +265,7 @@ class HereAgain extends FlameGame
           position: Vector2(width - 120, height - 150),
           priority: 4567899876523,
           onPressed: () {
+            if (isSfx) FlameAudio.play("powerup_paari.wav");
             if (isFast) {
               isFast = false;
               player.moveSpeed = 225;
@@ -250,18 +365,46 @@ class HereAgain extends FlameGame
     add(settingsHud);
   }
 
-  void addMusic() async {
-    bool isOn = true;
-    final musicOn = await Sprite.load('Controls/music_on.png');
-    final musicOff = await Sprite.load('Controls/music_off.png');
-
-    final musicToggle = ToggleButtonComponent(
-      priority: 4567890987654,
-      size: Vector2.all(32),
-      defaultSkin: SpriteComponent(sprite: musicOn),
-      defaultSelectedSkin: SpriteComponent(sprite: musicOff),
-      position: Vector2(21, 21),
-    );
-    add(musicToggle);
+  void addOverlayIcon(int level) async {
+    final waterDrop = await Sprite.load('Controls/h2o.png');
+    final electricPower = await Sprite.load('Controls/ep.png');
+    final oxygen = await Sprite.load('Controls/o2.png');
+    final SpriteComponent overlayIcon;
+    if (level == 1 || level == 2) {
+      overlayIcon = SpriteComponent(
+          sprite: oxygen,
+          size: Vector2(32, 32),
+          position: Vector2(130, 21),
+          priority: 456782345678678);
+      add(overlayIcon);
+    } else if (level == 3 || level == 4) {
+      overlayIcon = SpriteComponent(
+          sprite: waterDrop,
+          size: Vector2(32, 32),
+          position: Vector2(130, 21),
+          priority: 456782345678678);
+      add(overlayIcon);
+    } else if (level == 5 || level == 6 || level == 7) {
+      overlayIcon = SpriteComponent(
+          sprite: electricPower,
+          position: Vector2(120, 21),
+          priority: 456782345678678);
+      add(overlayIcon);
+    }
   }
+
+  // void addMusic() async {
+  //   bool isOn = true;
+  //   final musicOn = await Sprite.load('Controls/music_on.png');
+  //   final musicOff = await Sprite.load('Controls/music_off.png');
+  //
+  //   final musicToggle = ToggleButtonComponent(
+  //     priority: 4567890987654,
+  //     size: Vector2.all(32),
+  //     defaultSkin: SpriteComponent(sprite: musicOn),
+  //     defaultSelectedSkin: SpriteComponent(sprite: musicOff),
+  //     position: Vector2(21, 21),
+  //   );
+  //   add(musicToggle);
+  // }
 }

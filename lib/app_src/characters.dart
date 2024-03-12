@@ -1,27 +1,44 @@
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:here_again/app_src/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Character extends StatelessWidget {
-  const Character({super.key});
+class Character extends StatefulWidget {
+  SharedPreferences prefs;
+  Character({super.key, required this.prefs});
+
+  @override
+  State<Character> createState() => _CharacterState();
+}
+
+class _CharacterState extends State<Character> {
+  late bool isMusic, isSfx, isJoystick, isPaari;
+  String gretaBtnTxt = "Equip", paariBtnTxt = "Unequip";
 
   @override
   Widget build(BuildContext context) {
+    isMusic = widget.prefs.getBool("isMusic") ?? false;
+    isSfx = widget.prefs.getBool("isSfx") ?? false;
+    isPaari = widget.prefs.getBool("isPaari") ?? true;
+    if (isPaari) {
+      gretaBtnTxt = "Equip";
+      paariBtnTxt = "Unequip";
+    } else {
+      paariBtnTxt = "Equip";
+      gretaBtnTxt = "Unequip";
+    }
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-              image: AssetImage("assets/images/Background/Background.png"),
-              fit: BoxFit.fill,
-            )),
-          ),
+          screenBackground(),
           ListView.builder(
-            padding: EdgeInsets.all(25),
+            padding: const EdgeInsets.all(25),
             itemCount: 2,
             itemBuilder: (BuildContext context, int index) {
               return Center(child: characterData(index));
             },
-          )
+          ),
+          backButton(context),
         ],
       ),
     );
@@ -152,10 +169,52 @@ class Character extends StatelessWidget {
                 )
               ],
             ),
-            ElevatedButton(onPressed: () {}, child: Text("Equipped"))
+            ElevatedButton(
+                onPressed: () async {
+                  if (isSfx) FlameAudio.play("menuBtnClick.wav");
+                  setState(() {
+                    if (isPaari) {
+                      gretaBtnTxt = "Equip";
+                      paariBtnTxt = "Unequip";
+                    } else {
+                      paariBtnTxt = "Equip";
+                      gretaBtnTxt = "Unequip";
+                    }
+                  });
+                  await widget.prefs.setBool("isPaari", !isPaari);
+                  isPaari = !isPaari;
+                },
+                child: Text(
+                  (index == 0) ? paariBtnTxt : gretaBtnTxt,
+                  style: TextStyle(color: Colors.red, fontFamily: "Edo"),
+                ))
           ],
         ),
       ),
     );
   }
+
+  Widget screenBackground() => Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage("assets/images/Background/Background.png"),
+          fit: BoxFit.fill,
+        )),
+      );
+
+  Widget backButton(BuildContext context) => Positioned(
+      top: 10,
+      left: 10,
+      child: TextButton(
+          onPressed: () {
+            if (isSfx) FlameAudio.play("menuBtnClick.wav");
+
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => Home(prefs: widget.prefs)));
+          },
+          child: Image.asset(
+            "assets/images/Controls/close.png",
+            width: 32,
+            height: 32,
+          )));
 }

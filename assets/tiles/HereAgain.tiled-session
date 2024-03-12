@@ -3,34 +3,237 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level1.tmx",
+    "activeFile": "level3.tmx",
     "expandedProjectPaths": [
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "": {
             "scaleInEditor": 1
         },
+        "#dark_dungeon_tilemap": {
+            "scaleInDock": 1
+        },
         "#dark_dungeon_tileset": {
             "scaleInDock": 1
+        },
+        "Tiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "dark_dungeon_tilemap.tsx": {
+            "scaleInDock": 1.1944,
+            "scaleInEditor": 1
         },
         "dark_dungeon_tileset.tsx": {
             "scaleInDock": 3.6248,
             "scaleInEditor": 1
         },
-        "kenny_tilemap.tsx": {
+        "dark_tilemap.tsx": {
+            "scaleInDock": 1.7623,
+            "scaleInEditor": 1
+        },
+        "dungeon_play.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "kenny_tilemap.tsx": {
+            "scaleInDock": 1.3341,
+            "scaleInEditor": 1
+        },
         "level1.tmx": {
-            "scale": 1.1503,
-            "selectedLayer": 1,
+            "expandedGroupLayers": [
+                9
+            ],
+            "expandedObjectLayers": [
+                4,
+                5
+            ],
+            "scale": 0.626,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 116.4913500825871,
-                "y": 412.93575588976785
+                "x": 359.42492012779553,
+                "y": 354.6325878594249
             }
         },
         "level1.tmx#dark_dungeon_tilemap": {
-            "scaleInDock": 1.3206
+            "scaleInDock": 3.1898,
+            "scaleInEditor": 1
+        },
+        "level10.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 0.5179,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 638.1540837999613,
+                "y": 561.8845336937633
+            }
+        },
+        "level11.tmx": {
+            "expandedObjectLayers": [
+                2,
+                3
+            ],
+            "scale": 0.7821,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 312.6198695818948,
+                "y": 368.23935558112765
+            }
+        },
+        "level11.tmx#dark_dungeon_tilemap": {
+            "scaleInDock": 1
+        },
+        "level12.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 0.5139,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 366.8028799377311,
+                "y": 369.72173574625407
+            }
+        },
+        "level12.tmx#dark_dungeon_tilemap": {
+            "scaleInDock": 1
+        },
+        "level13.tmx": {
+            "expandedObjectLayers": [
+                2,
+                3
+            ],
+            "scale": 0.7203,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 494.93266694432873,
+                "y": 369.290573372206
+            }
+        },
+        "level13.tmx#dark_dungeon_tilemap": {
+            "scaleInDock": 1
+        },
+        "level14.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 0.5635,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 639.751552795031,
+                "y": 638.8642413487133
+            }
+        },
+        "level15.tmx": {
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 0.4561,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1348.3885112913836,
+                "y": 802.4556018417014
+            }
+        },
+        "level2.tmx": {
+            "expandedObjectLayers": [
+                3,
+                4
+            ],
+            "scale": 0.7045,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 352.0227111426544,
+                "y": 347.76437189496096
+            }
+        },
+        "level2.tmx#dark_dungeon_tilemap": {
+            "scaleInDock": 0.9444
+        },
+        "level3.tmx": {
+            "expandedObjectLayers": [
+                4,
+                3
+            ],
+            "scale": 1.6564,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1031.7556145858487,
+                "y": 448.5631489978266
+            }
+        },
+        "level4.tmx": {
+            "expandedObjectLayers": [
+                2,
+                4
+            ],
+            "scale": 0.6415,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 639.9064692127826,
+                "y": 639.1270459859704
+            }
+        },
+        "level5.tmx": {
+            "expandedObjectLayers": [
+                3,
+                2
+            ],
+            "scale": 2.7235,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 116.39434551129062,
+                "y": 519.919221589866
+            }
+        },
+        "level6.tmx": {
+            "expandedObjectLayers": [
+                2,
+                3
+            ],
+            "scale": 0.8553,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 638.9570910791535,
+                "y": 639.5416812814217
+            }
+        },
+        "level7.tmx": {
+            "expandedObjectLayers": [
+                2,
+                3
+            ],
+            "scale": 0.7722,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 639.083139083139,
+                "y": 639.7306397306397
+            }
+        },
+        "level8.tmx": {
+            "expandedObjectLayers": [
+                4,
+                3
+            ],
+            "scale": 0.3798,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 641.1269088994208,
+                "y": 642.4433912585571
+            }
+        },
+        "level9.tmx": {
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 0.5608,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 639.2653352353781,
+                "y": 559.9144079885879
+            }
         },
         "test.tmx": {
             "scale": 4.303,
@@ -43,23 +246,42 @@
     },
     "last.externalTilesetPath": "C:/Users/kumar/FlutterProjects/Here Again/assets/tiles",
     "last.imagePath": "C:/Users/kumar/FlutterProjects/Here Again/assets/images/Terrain",
-    "map.height": 46,
+    "map.height": 200,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
-    "map.width": 46,
+    "map.width": 200,
     "openFiles": [
-        "level1.tmx"
+        "level14.tmx",
+        "level10.tmx",
+        "level3.tmx",
+        "level4.tmx",
+        "level6.tmx",
+        "level7.tmx",
+        "level8.tmx",
+        "level9.tmx",
+        "level11.tmx",
+        "level13.tmx",
+        "level12.tmx",
+        "level15.tmx"
     ],
     "project": "HereAgain.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "level1.tmx",
-        "dark_dungeon_tileset.tsx",
-        "test.tmx",
-        "kenny_tilemap.tsx"
+        "level14.tmx",
+        "level10.tmx",
+        "level15.tmx",
+        "level12.tmx",
+        "level13.tmx",
+        "level11.tmx",
+        "level9.tmx",
+        "level8.tmx",
+        "level7.tmx",
+        "level6.tmx",
+        "level4.tmx",
+        "level3.tmx"
     ],
-    "tileset.embedInMap": true,
+    "tileset.embedInMap": false,
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
     "tileset.spacing": 0,

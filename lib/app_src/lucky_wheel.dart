@@ -1,19 +1,28 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'home.dart';
+
 class LuckyWheel extends StatefulWidget {
-  const LuckyWheel({super.key});
+  SharedPreferences prefs;
+  LuckyWheel({super.key, required this.prefs});
 
   @override
   State<LuckyWheel> createState() => _LuckyWheelState();
 }
 
 class _LuckyWheelState extends State<LuckyWheel> {
+  late bool isMusic, isSfx, isJoystick, isPaari;
+
+  late int waterDrops;
+  bool _isMounted = false;
   final chosen = BehaviorSubject<int>();
   List<Color> bgColor = const [
     Color(0xFFea142d),
@@ -45,11 +54,11 @@ class _LuckyWheelState extends State<LuckyWheel> {
       style: TextStyle(color: Colors.white, fontFamily: "Edo"),
     ),
     Text(
-      "10 Water Drops",
+      "20 Water Drops",
       style: TextStyle(color: Colors.white, fontFamily: "Edo"),
     ),
     Text(
-      "-10 Water Drops",
+      "10 Water Drops",
       style: TextStyle(color: Colors.white, fontFamily: "Edo"),
     ),
     Text(
@@ -137,22 +146,37 @@ class _LuckyWheelState extends State<LuckyWheel> {
     return min + random.nextInt(max - min + 1);
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    _isMounted = true;
+    super.initState();
+  }
+
   void startTimer() {
-    const oneDay = 15; // Number of seconds in a day
-    setState(() {
+    const oneDay = 86400; // Number of seconds in a day
+    if (_isMounted) {
+      setState(() {
+        isTimerRunning = true;
+        secondsRemaining = oneDay;
+      });
+    } else {
       isTimerRunning = true;
       secondsRemaining = oneDay;
-    });
+    }
+
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        if (secondsRemaining < 1) {
-          timer.cancel();
-          todayCard = getRandomCard(0, txtTitle.length - 1);
-          isTimerRunning = false;
-        } else {
-          secondsRemaining--;
-        }
-      });
+      if (_isMounted) {
+        setState(() {
+          if (secondsRemaining < 1) {
+            timer.cancel();
+            todayCard = getRandomCard(0, txtTitle.length - 1);
+            isTimerRunning = false;
+          } else {
+            secondsRemaining--;
+          }
+        });
+      }
     });
   }
 
@@ -161,12 +185,15 @@ class _LuckyWheelState extends State<LuckyWheel> {
   @override
   void dispose() {
     // TODO: implement dispose
-    chosen.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    isMusic = widget.prefs.getBool("isMusic") ?? false;
+    isSfx = widget.prefs.getBool("isSfx") ?? false;
+    isPaari = widget.prefs.getBool("isPaari") ?? true;
+    waterDrops = widget.prefs.getInt("waterDrops") ?? 30;
     return Scaffold(
       body: Stack(
         children: [
@@ -181,7 +208,11 @@ class _LuckyWheelState extends State<LuckyWheel> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [todaysCard(), fortuneWheel(), spinButton()],
+              children: [
+                todaysCard(),
+                fortuneWheel(widget.prefs),
+                spinButton()
+              ],
             ),
           ),
           Positioned(
@@ -202,7 +233,7 @@ class _LuckyWheelState extends State<LuckyWheel> {
                         height: 40,
                       ),
                       Text(
-                        " 64",
+                        " $waterDrops",
                         style: TextStyle(
                             fontSize: 20,
                             fontFamily: "Edo",
@@ -212,43 +243,63 @@ class _LuckyWheelState extends State<LuckyWheel> {
                     ],
                   ),
                 ),
-              ))
+              )),
+          backButton(context),
         ],
       ),
     );
   }
 
-  Widget spinButton() => Container(
-      height: 30,
-      width: 160,
-      child: ElevatedButton(
-        onPressed: () {
-          if (!isTimerRunning) {
-            chosen.add(Fortune.randomInt(0, txtTitle.length - 1));
-            startTimer();
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Center(
-                child: Text(
-                  "Come after ${(secondsRemaining ~/ 3600).toString().padLeft(2, '0')}:${((secondsRemaining % 3600) ~/ 60).toString().padLeft(2, '0')}:${(secondsRemaining % 60).toString().padLeft(2, '0')}",
-                  style: TextStyle(
-                      fontFamily: "Edo", fontSize: 30, color: Colors.red),
-                ),
-              ),
-              backgroundColor: Colors.transparent,
-            ));
-          }
-        },
-        child: isTimerRunning
-            ? Text(
-                '${(secondsRemaining ~/ 3600).toString().padLeft(2, '0')}:${((secondsRemaining % 3600) ~/ 60).toString().padLeft(2, '0')}:${(secondsRemaining % 60).toString().padLeft(2, '0')}')
-            : Text(
-                'Spin',
-                style: TextStyle(color: Colors.red, fontFamily: "Edo"),
-              ),
-      ));
+  Widget backButton(BuildContext context) => Positioned(
+      top: 0,
+      left: 0,
+      child: TextButton(
+          onPressed: () {
+            if (isSfx) FlameAudio.play("menuBtnClick.wav");
 
-  Widget fortuneWheel() => Container(
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => Home(prefs: widget.prefs)));
+          },
+          child: Image.asset(
+            "assets/images/Controls/close.png",
+            width: 32,
+            height: 32,
+          )));
+
+  Widget spinButton() {
+    if (isSfx) FlameAudio.play("menuBtnClick.wav");
+    return Container(
+        height: 30,
+        width: 160,
+        child: ElevatedButton(
+          onPressed: () {
+            if (!isTimerRunning) {
+              chosen.add(Fortune.randomInt(0, txtTitle.length - 1));
+              startTimer();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Center(
+                  child: Text(
+                    "Come after ${(secondsRemaining ~/ 3600).toString().padLeft(2, '0')}:${((secondsRemaining % 3600) ~/ 60).toString().padLeft(2, '0')}:${(secondsRemaining % 60).toString().padLeft(2, '0')}",
+                    style: TextStyle(
+                        fontFamily: "Edo", fontSize: 30, color: Colors.red),
+                  ),
+                ),
+                backgroundColor: Colors.transparent,
+              ));
+            }
+          },
+          child: isTimerRunning
+              ? Text(
+                  '${(secondsRemaining ~/ 3600).toString().padLeft(2, '0')}:${((secondsRemaining % 3600) ~/ 60).toString().padLeft(2, '0')}:${(secondsRemaining % 60).toString().padLeft(2, '0')}')
+              : Text(
+                  'Spin',
+                  style: TextStyle(color: Colors.red, fontFamily: "Edo"),
+                ),
+        ));
+  }
+
+  Widget fortuneWheel(SharedPreferences prefs) => Container(
         height: 300,
         width: 300,
         child: FortuneWheel(
@@ -259,11 +310,14 @@ class _LuckyWheelState extends State<LuckyWheel> {
               if (val == 0) {
                 snack("Oops!! You got 0 Water Drops", context);
               } else if (val == 1) {
+                prefs.setInt("waterDrops", waterDrops + 3);
                 snack("Wow!! You got 3 Water Drops", context);
               } else if (val == 2) {
-                snack("Ultimate!! You got 10 Water Drops", context);
+                prefs.setInt("waterDrops", waterDrops + 20);
+                snack("Ultimate!! You got 20 Water Drops", context);
               } else if (val == 3) {
-                snack("You got penalty of 10 Water Drops", context);
+                prefs.setInt("waterDrops", waterDrops + 10);
+                snack("You got 10 Water Drops", context);
               } else if (val == 4) {
                 snack("Amazing!! You got a Rare Card}", context);
               } else {
